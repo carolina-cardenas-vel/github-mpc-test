@@ -7,9 +7,11 @@ for extracurricular activities at Mergington High School.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 import os
 from pathlib import Path
+import csv
+import io
 
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
@@ -86,6 +88,59 @@ def root():
 @app.get("/activities")
 def get_activities():
     return activities
+
+
+@app.get("/reports/activities.csv")
+def export_activities_csv():
+    """Export activity participation data as CSV."""
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "activity_name",
+        "description",
+        "schedule",
+        "max_participants",
+        "current_participants",
+        "spots_left",
+        "participant_email",
+    ])
+
+    for activity_name, details in activities.items():
+        participants = details["participants"]
+        current_participants = len(participants)
+        spots_left = details["max_participants"] - current_participants
+
+        # Keep one row per participant while still emitting empty activities.
+        if participants:
+            for participant_email in participants:
+                writer.writerow([
+                    activity_name,
+                    details["description"],
+                    details["schedule"],
+                    details["max_participants"],
+                    current_participants,
+                    spots_left,
+                    participant_email,
+                ])
+        else:
+            writer.writerow([
+                activity_name,
+                details["description"],
+                details["schedule"],
+                details["max_participants"],
+                current_participants,
+                spots_left,
+                "",
+            ])
+
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=activities-report.csv"
+        },
+    )
 
 
 @app.post("/activities/{activity_name}/signup")

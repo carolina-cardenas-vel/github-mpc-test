@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const downloadCsvButton = document.getElementById("download-csv-btn");
+
+  downloadCsvButton.addEventListener("click", () => {
+    window.location.href = "/reports/activities.csv";
+  });
 
   // Function to fetch activities from API
   async function fetchActivities() {
