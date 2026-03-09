@@ -1,60 +1,188 @@
+:root {
+  --lime-strong: #78e22a;
+  --lime-soft: #cfffaa;
+  --surface: #ffffff;
+  --ink: #10210f;
+  --ink-muted: #466043;
+  --line: #c7dbc2;
+  --danger: #c62828;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  position: relative;
   line-height: 1.6;
-  color: #333;
-  max-width: 1200px;
+  color: var(--ink);
+  max-width: 1160px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f5;
+  background:
+    linear-gradient(120deg, rgba(120, 226, 42, 0.16), rgba(255, 255, 255, 0.88)),
+    linear-gradient(180deg, #f9fff7, #ffffff 32%);
+}
+
+/* Animated branch-like lines to add a git-inspired background motif. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 12% 16%, rgba(120, 226, 42, 0.28) 0 5px, transparent 6px),
+    radial-gradient(circle at 38% 74%, rgba(120, 226, 42, 0.26) 0 4px, transparent 5px),
+    radial-gradient(circle at 84% 30%, rgba(120, 226, 42, 0.24) 0 5px, transparent 6px),
+    repeating-linear-gradient(
+      24deg,
+      rgba(120, 226, 42, 0.22) 0 2px,
+      transparent 2px 72px
+    ),
+    repeating-linear-gradient(
+      -20deg,
+      rgba(16, 33, 15, 0.08) 0 2px,
+      transparent 2px 84px
+    );
+  animation: branch-shift 22s linear infinite;
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 68% 54%, rgba(120, 226, 42, 0.2) 0 5px, transparent 6px),
+    radial-gradient(circle at 28% 40%, rgba(16, 33, 15, 0.12) 0 3px, transparent 4px),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0) 0 44px,
+      rgba(120, 226, 42, 0.08) 44px 46px
+    );
+  animation: branch-float 16s ease-in-out infinite alternate;
+}
+
+@keyframes branch-shift {
+  0% {
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  }
+  100% {
+    background-position: 35px -20px, -30px 20px, 18px -14px, 75px 0, -80px 0;
+  }
+}
+
+@keyframes branch-float {
+  0% {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
 }
 
 header {
   text-align: center;
-  padding: 20px 0;
-  margin-bottom: 30px;
-  background-color: #1a237e;
-  color: white;
-  border-radius: 5px;
+  padding: 22px 18px;
+  margin-bottom: 22px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--surface), #f2ffe7);
+  box-shadow: 0 12px 24px rgba(120, 226, 42, 0.14);
 }
 
 header h1 {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+}
+
+.school-pride-tagline {
+  margin-top: 10px;
+  color: var(--ink-muted);
+  font-weight: 600;
+}
+
+#mascots-container {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(16, 33, 15, 0.08);
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+#mascots-container h3 {
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.mascot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.mascot-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, #ffffff, #f5ffef);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mascot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(120, 226, 42, 0.22);
+}
+
+.mascot-card img {
+  width: 100%;
+  max-height: 130px;
+  object-fit: contain;
+}
+
+.mascot-card span {
+  font-weight: 700;
 }
 
 main {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 980px) {
   main {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1.7fr 1fr;
+    align-items: start;
   }
 }
 
 section {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface);
+  padding: 18px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  box-shadow: 0 8px 18px rgba(16, 33, 15, 0.06);
   width: 100%;
-  max-width: 500px;
 }
 
 section h3 {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-  color: #1a237e;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
 }
 
 #download-csv-btn {
@@ -63,48 +191,45 @@ section h3 {
 
 .activity-card {
   margin-bottom: 15px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background-color: #fbfff8;
 }
 
 .activity-card h4 {
-  margin-bottom: 10px;
-  color: #0066cc;
+  margin-bottom: 8px;
+  color: #236900;
 }
 
 .activity-card p {
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
-/* New styles for participants section */
 .participants-container {
-  margin-top: 15px;
-  padding-top: 12px;
-  border-top: 1px dashed #ccc;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
 }
 
 .participants-section h5 {
   margin-bottom: 8px;
-  color: #1a237e;
+  color: var(--ink);
   font-size: 16px;
 }
 
 .participants-section ul {
   list-style-type: none;
-  padding-left: 5px;
+  padding-left: 2px;
 }
 
 .participants-section ul li {
   padding: 4px 0;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Remove the bullet point pseudo-element */
 .participants-section ul li::before {
   display: none;
 }
@@ -117,20 +242,19 @@ section h3 {
 .delete-btn {
   background: none;
   border: none;
-  color: #c62828;
+  color: var(--danger);
   cursor: pointer;
   font-size: 14px;
   padding: 2px 5px;
-  transition: all 0.2s;
   border-radius: 3px;
 }
 
 .delete-btn:hover {
-  background-color: #ffebee;
+  background-color: #ffeaea;
 }
 
 .participants-section p {
-  color: #777;
+  color: #5d725b;
   font-style: italic;
 }
 
@@ -141,43 +265,46 @@ section h3 {
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
   font-size: 16px;
+  background-color: #fcfff9;
 }
 
 button {
-  background-color: #1a237e;
-  color: white;
+  background: linear-gradient(135deg, var(--lime-strong), #60cd1f);
+  color: #ffffff;
   border: none;
   padding: 10px 15px;
-  font-size: 16px;
-  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 button:hover {
-  background-color: #3949ab;
+  filter: brightness(1.04);
+  transform: translateY(-1px);
 }
 
 .message {
   margin-top: 20px;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 7px;
 }
 
 .success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
+  background-color: #ecffe0;
+  color: #2c6009;
+  border: 1px solid #bde796;
 }
 
 .error {
@@ -187,9 +314,9 @@ button:hover {
 }
 
 .info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+  background-color: #e9fce5;
+  color: #1d6219;
+  border: 1px solid #bfe5bd;
 }
 
 .hidden {
@@ -198,7 +325,8 @@ button:hover {
 
 footer {
   text-align: center;
-  margin-top: 30px;
-  padding: 20px;
-  color: #666;
+  margin-top: 22px;
+  padding: 16px;
+  color: #476045;
+  font-weight: 600;
 }
