@@ -1,13 +1,49 @@
 document.addEventListener("DOMContentLoaded", () => {
   const activitiesList = document.getElementById("activities-list");
-  const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const notificationDiv = document.getElementById("notification");
   const downloadCsvButton = document.getElementById("download-csv-btn");
+  const registerDialog = document.getElementById("register-dialog");
+  const dialogCloseBtn = document.getElementById("dialog-close-btn");
+  const dialogActivityName = document.getElementById("dialog-activity-name");
+
+  let selectedActivity = "";
 
   downloadCsvButton.addEventListener("click", () => {
     window.location.href = "/reports/activities.csv";
   });
+
+  // Open registration dialog for a given activity
+  function openRegisterDialog(activityName) {
+    selectedActivity = activityName;
+    dialogActivityName.textContent = activityName;
+    messageDiv.classList.add("hidden");
+    signupForm.reset();
+    registerDialog.showModal();
+  }
+
+  // Close dialog via close button
+  dialogCloseBtn.addEventListener("click", () => {
+    registerDialog.close();
+  });
+
+  // Close dialog when clicking the backdrop
+  registerDialog.addEventListener("click", (event) => {
+    if (event.target === registerDialog) {
+      registerDialog.close();
+    }
+  });
+
+  // Show a notification outside the dialog (e.g. after unregister)
+  function showNotification(text, type) {
+    notificationDiv.textContent = text;
+    notificationDiv.className = type;
+    notificationDiv.classList.remove("hidden");
+    setTimeout(() => {
+      notificationDiv.classList.add("hidden");
+    }, 5000);
+  }
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -50,20 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="participants-container">
             ${participantsHTML}
           </div>
+          <div class="card-actions">
+            <button class="register-btn" data-activity="${name}"${spotsLeft === 0 ? " disabled" : ""}>
+              Register Student
+            </button>
+          </div>
         `;
 
         activitiesList.appendChild(activityCard);
-
-        // Add option to select dropdown
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        activitySelect.appendChild(option);
       });
 
       // Add event listeners to delete buttons
       document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", handleUnregister);
+      });
+
+      // Add event listeners to register buttons
+      document.querySelectorAll(".register-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          openRegisterDialog(button.getAttribute("data-activity"));
+        });
       });
     } catch (error) {
       activitiesList.innerHTML =
@@ -91,26 +133,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        messageDiv.textContent = result.message;
-        messageDiv.className = "success";
-
+        showNotification(result.message, "success");
         // Refresh activities list to show updated participants
         fetchActivities();
       } else {
-        messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        showNotification(result.detail || "An error occurred", "error");
       }
-
-      messageDiv.classList.remove("hidden");
-
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        messageDiv.classList.add("hidden");
-      }, 5000);
     } catch (error) {
-      messageDiv.textContent = "Failed to unregister. Please try again.";
-      messageDiv.className = "error";
-      messageDiv.classList.remove("hidden");
+      showNotification("Failed to unregister. Please try again.", "error");
       console.error("Error unregistering:", error);
     }
   }
@@ -120,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     const email = document.getElementById("email").value;
-    const activity = document.getElementById("activity").value;
+    const activity = selectedActivity;
 
     try {
       const response = await fetch(
@@ -137,21 +167,26 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
+        messageDiv.classList.remove("hidden");
         signupForm.reset();
 
         // Refresh activities list to show updated participants
         fetchActivities();
+
+        // Close dialog after a short delay so user sees the success message
+        setTimeout(() => {
+          registerDialog.close();
+        }, 1500);
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
+        messageDiv.classList.remove("hidden");
+
+        // Hide message after 5 seconds
+        setTimeout(() => {
+          messageDiv.classList.add("hidden");
+        }, 5000);
       }
-
-      messageDiv.classList.remove("hidden");
-
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        messageDiv.classList.add("hidden");
-      }, 5000);
     } catch (error) {
       messageDiv.textContent = "Failed to sign up. Please try again.";
       messageDiv.className = "error";
